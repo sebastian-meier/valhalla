@@ -32,7 +32,8 @@
 #include <geos/geom/Polygon.h>
 #include <geos/io/WKTReader.h>
 #include <geos/io/WKTWriter.h>
-#include <geos/opLinemerge.h>
+//#include <geos/opLinemerge.h>
+#include <geos/operation/linemerge/LineMerger.h>
 #include <geos/util/GEOSException.h>
 
 #include <boost/optional.hpp>
@@ -151,15 +152,15 @@ std::vector<std::string> GetWkts(std::unique_ptr<Geometry>& mline) {
 
   LineMerger merger;
   merger.add(mline.get());
-  std::unique_ptr<std::vector<LineString*>> merged(merger.getMergedLineStrings());
+  std::vector<std::unique_ptr<geos::geom::LineString>> merged(merger.getMergedLineStrings());
   WKTWriter writer;
 
   // Procces ways into lines or simple polygon list
-  polygondata* polys = new polygondata[merged->size()];
+  polygondata* polys = new polygondata[merged.size()];
 
   unsigned totalpolys = 0;
-  for (unsigned i = 0; i < merged->size(); ++i) {
-    std::unique_ptr<LineString> pline((*merged)[i]);
+  for (unsigned i = 0; i < merged.size(); ++i) {
+    std::unique_ptr<LineString> pline(merged[i].release());
     if (pline->getNumPoints() > 3 && pline->isClosed()) {
 #if GEOS_VERSION_MAJOR == 3 && GEOS_VERSION_MINOR >= 8
       polys[totalpolys].polygon =
