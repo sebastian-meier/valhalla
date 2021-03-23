@@ -16,6 +16,39 @@
 
 Valhalla is an open source routing engine and accompanying libraries for use with OpenStreetMap data. Valhalla also includes tools like time+distance matrix computation, isochrones, elevation sampling, map matching and tour optimization (Travelling Salesman).
 
+---------
+## Special Edition
+
+Time is transformed to co2
+
+### CO2 Emissions based on speed
+Source: https://www.umweltbundesamt.de/sites/default/files/medien/1410/publikationen/2020-06-15_texte_38-2020_wirkung-tempolimit_bf.pdf
+
+### Reverse engineering
+
+30 =  450 - 450/83*54.507     = 154.480120482 g CO2 / km > n > 1.31997591  > 0.757589584
+50 =  450 - 450/83*61.414     = 117.03253012  g CO2 / km > n > 1           > 1.0
+100 = 400 - 400/85.314*55.378 = 140.356799587 g CO2 / km > n > 1.199297319 > 0.833821592
+130 = 400 - 400/85.314*47.199 = 178.70455025  g CO2 / km > n > 1.526964768 > 0.654893957
+
+### query
+
+11.684 km highway (130) > 414.233 > 35,453012667 pro kilometer * 5,040602668 = g CO2
+3.033 km tertiary (50)  > 218.441 > 72,021430926 pro kilometer
+
+HIGHWAY
+curl http://localhost:8002/route --data '{"locations":[{"lat":52.2524,"lon":12.2122,"type":"break"},{"type":"break","lat":52.2344,"lon":12.0706}],"costing":"auto_co2","directions_options":{"units":"km", "directions_type":"none"}}' | jq '.'
+
+TERTIARY
+curl http://localhost:8002/route --data '{"locations":[{"lat":52.3254,"lon":12.3146,"type":"break"},{"type":"break","lat":52.3375,"lon":12.2759}],"costing":"auto_co2","directions_options":{"units":"km", "directions_type":"none"}}' | jq '.'
+
+ISOCHRONES
+curl http://localhost:8002/isochrone --data '{"locations":[{"lat":52.484527,"lon":13.386201}],"costing":"auto_co2","contours":[{"time":15,"color":"ff0000"}]}'
+
+For more information on additional steps, see this [repo](https://github.com/sebastian-meier/valhalla-co2).
+
+---------
+
 ## Build Status
 
 | Linux/MacOs | Windows | MinGW64 | Code Coverage |
