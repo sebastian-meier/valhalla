@@ -46,6 +46,7 @@ public:
     Register(Costing::transit, CreateTransitCost);
     Register(Costing::none_, CreateNoCost);
     Register(Costing::bikeshare, CreateBikeShareCost);
+    Register(Costing::auto_co2, CreateAutoCo2Cost);
   }
 
   /**

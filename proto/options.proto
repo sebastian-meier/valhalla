@@ -47,6 +47,7 @@ enum Costing {
   taxi = 12;
   none_ = 13;
   bikeshare = 14;
+  auto_co2 = 15;
 }
 
 message AvoidEdge {

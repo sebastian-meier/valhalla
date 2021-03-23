@@ -91,6 +91,13 @@ TEST_F(IgnoreAccessTest, AutoIgnoreOneWay) {
       gurka::route(ignore_access_map, {"A", "D"}, cost, {{IgnoreOneWaysParam(cost), "1"}}));
 }
 
+TEST_F(IgnoreAccessTest, AutoCo2IgnoreOneWay) {
+  const std::string cost = "auto_co2";
+  EXPECT_THROW(gurka::route(ignore_access_map, {"A", "D"}, cost), std::runtime_error);
+  EXPECT_NO_THROW(
+      gurka::route(ignore_access_map, {"A", "D"}, cost, {{IgnoreOneWaysParam(cost), "1"}}));
+}
+
 TEST_F(IgnoreAccessTest, BusIgnoreOneWay) {
   const std::string cost = "bus";
   EXPECT_THROW(gurka::route(ignore_access_map, {"A", "D"}, cost), std::runtime_error);
@@ -145,6 +152,14 @@ TEST_F(IgnoreAccessTest, BicycleIgnoreAccess) {
 
 TEST_F(IgnoreAccessTest, AutoIgnoreAccess) {
   const std::string cost = "auto";
+  // ignore edges and nodes access restriction
+  EXPECT_THROW(gurka::route(ignore_access_map, {"A", "B", "D"}, cost), std::runtime_error);
+  EXPECT_NO_THROW(
+      gurka::route(ignore_access_map, {"A", "B", "D"}, cost, {{IgnoreAccessParam(cost), "1"}}));
+}
+
+TEST_F(IgnoreAccessTest, AutoCo2IgnoreAccess) {
+  const std::string cost = "auto_co2";
   // ignore edges and nodes access restriction
   EXPECT_THROW(gurka::route(ignore_access_map, {"A", "B", "D"}, cost), std::runtime_error);
   EXPECT_NO_THROW(

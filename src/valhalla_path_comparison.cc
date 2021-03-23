@@ -177,7 +177,7 @@ int main(int argc, char* argv[]) {
   options.add_options()("help,h", "Print this help message.")("version,v",
                                                               "Print the version of this software.")(
       "type,t", boost::program_options::value<std::string>(&routetype),
-      "Route Type: auto|bicycle|pedestrian|auto-shorter")("shape,s",
+      "Route Type: auto|bicycle|pedestrian|auto-shorter|auto-co2")("shape,s",
                                                           boost::program_options::value<std::string>(
                                                               &shape),
                                                           "")(

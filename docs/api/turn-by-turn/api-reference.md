@@ -68,6 +68,7 @@ Valhalla's routing service uses dynamic, run-time costing to generate the route 
 | Costing model | Description |
 | :----------------- | :----------- |
 | `auto` | Standard costing for driving routes by car, motorcycle, truck, and so on that obeys automobile driving rules, such as access and turn restrictions. `Auto` provides a short time path (though not guaranteed to be shortest time) and uses intersection costing to minimize turns and maneuvers or road name changes. Routes also tend to favor highways and higher classification roads, such as motorways and trunks. |
+| `auto_co2` | Alternate costing for driving that converts time to co2 output (average car). |
 | `bicycle` | Standard costing for travel by bicycle, with a slight preference for using [cycleways](http://wiki.openstreetmap.org/wiki/Key:cycleway) or roads with bicycle lanes. Bicycle routes follow regular roads when needed, but avoid roads without bicycle access. |
 | `bus` | Standard costing for bus routes. Bus costing inherits the auto costing behaviors, but checks for bus access on the roads. |
 |**BETA** `bikeshare` | A combination of pedestrian and bicycle. Use bike share station(`amenity:bicycle_rental`) to change the travel mode |
@@ -91,7 +92,7 @@ A special costing option is `shortest`, which, when `true`, will solely use dist
 
 ##### Automobile and bus costing options
 
-These options are available for `auto`, `bus`, and `truck` costing methods.
+These options are available for `auto`, `auto_co2`, `bus`, and `truck` costing methods.
 
 | Automobile options | Description |
 | :-------------------------- | :----------- |

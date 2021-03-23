@@ -64,16 +64,16 @@ restriction = {
 --the default speed for tracks is lowered after
 --the call to default_speed
 default_speed = {
-[0] = 105,
-[1] = 90,
-[2] = 75,
-[3] = 60,
-[4] = 50,
-[5] = 40,
-[6] = 35,
-[7] = 25
+[0] = 36,
+[1] = 40,
+[2] = 45,
+[3] = 48,
+[4] = 47,
+[5] = 42,
+[6] = 38,
+[7] = 30
 }
-
+  
 access = {
 ["yes"] = "true",
 ["private"] = "true",

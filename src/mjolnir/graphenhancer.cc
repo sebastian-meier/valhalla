@@ -143,16 +143,16 @@ void UpdateSpeed(DirectedEdge& directededge,
     if (directededge.surface() >= Surface::kPavedRough) {
       uint32_t speed = directededge.speed();
       if (speed >= 50) {
-        directededge.set_speed(speed - 10);
+        directededge.set_speed(speed);
       } else if (speed > 15) {
-        directededge.set_speed(speed - 5);
+        directededge.set_speed(speed);
       }
     }
   } else {
     // Set speed on ferries. Base the speed on the length - assumes
     // that longer lengths generally use a faster ferry boat
     if (directededge.use() == Use::kRailFerry) {
-      directededge.set_speed(65); // 40 MPH
+      directededge.set_speed(48); // 40 MPH // TODO: set_speed
       return;
     } else if (directededge.use() == Use::kFerry) {
       // if duration flag is set do nothing with speed - currently set
@@ -161,11 +161,11 @@ void UpdateSpeed(DirectedEdge& directededge,
       if (directededge.leaves_tile()) {
         return;
       } else if (directededge.length() < 2000) {
-        directededge.set_speed(10); // 5 knots
+        directededge.set_speed(19); // 5 knots
       } else if (directededge.length() < 8000) {
-        directededge.set_speed(20); // 10 knots
+        directededge.set_speed(26); // 10 knots
       } else {
-        directededge.set_speed(30); // 15 knots
+        directededge.set_speed(34); // 15 knots
       }
       return;
     }
@@ -1459,7 +1459,7 @@ void enhance(const boost::property_tree::ptree& pt,
   // 25 MPH - tertiary
   // 20 MPH - residential and unclassified
   // 15 MPH - service/other
-  uint32_t urban_rc_speed[] = {89, 73, 57, 49, 40, 35, 30, 20};
+  uint32_t urban_rc_speed[] = {40, 45, 48, 47, 42, 38, 34, 16}; // CHANGE
 
   // Get some things we need throughout
   enhancer_stats stats{std::numeric_limits<float>::min(), 0};

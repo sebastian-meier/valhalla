@@ -28,16 +28,16 @@ namespace {
 
 // Base transition costs
 // TODO - can we define these in dynamiccost.h and override here if they differ?
-constexpr float kDefaultDestinationOnlyPenalty = 600.0f; // Seconds
-constexpr float kDefaultManeuverPenalty = 5.0f;          // Seconds
-constexpr float kDefaultAlleyPenalty = 5.0f;             // Seconds
-constexpr float kDefaultGateCost = 30.0f;                // Seconds
-constexpr float kDefaultGatePenalty = 300.0f;            // Seconds
-constexpr float kDefaultTollBoothCost = 15.0f;           // Seconds
+constexpr float kDefaultDestinationOnlyPenalty = 0.0f; // Seconds
+constexpr float kDefaultManeuverPenalty = 0.0f;          // Seconds
+constexpr float kDefaultAlleyPenalty = 0.0f;             // Seconds
+constexpr float kDefaultGateCost = 0.0f;                // Seconds
+constexpr float kDefaultGatePenalty = 0.0f;            // Seconds
+constexpr float kDefaultTollBoothCost = 0.0f;           // Seconds
 constexpr float kDefaultTollBoothPenalty = 0.0f;         // Seconds
-constexpr float kDefaultFerryCost = 300.0f;              // Seconds
-constexpr float kDefaultRailFerryCost = 300.0f;          // Seconds
-constexpr float kDefaultCountryCrossingCost = 600.0f;    // Seconds
+constexpr float kDefaultFerryCost = 0.0f;              // Seconds
+constexpr float kDefaultRailFerryCost = 0.0f;          // Seconds
+constexpr float kDefaultCountryCrossingCost = 0.0f;    // Seconds
 constexpr float kDefaultCountryCrossingPenalty = 0.0f;   // Seconds
 
 // Other options
@@ -106,6 +106,17 @@ constexpr float kHighwayFactor[] = {
     0.0f,  // Unclassified
     0.0f,  // Residential
     0.0f   // Service, other
+};
+
+constexpr float kHighwayFactorCo2[] = {
+  0.0f, // Motorway > 130 km/h might need to increase to 150 km/h
+  0.0f,  // Trunk > 100 km/h
+  0.0f,  // Primary > 50 km/h
+  0.0f,  // Secondary > 50 km/h
+  0.0f,  // Tertiary > 50 km/h
+  0.0f,  // Unclassified > 50 km/h
+  0.0f,  // Residential > 30 km/h
+  0.0f   // Service, other
 };
 
 constexpr float kSurfaceFactor[] = {
@@ -648,6 +659,72 @@ void ParseAutoCostOptions(const rapidjson::Document& doc,
 cost_ptr_t CreateAutoCost(const CostingOptions& costing_options) {
   return std::make_shared<AutoCost>(costing_options);
 }
+
+/* ------------------------------------------------------------------------------------------------------------- */
+
+/**
+ * Derived class providing an alternate costing for driving that is intended
+ * to provide a short path.
+ */
+class AutoCo2Cost : public AutoCost {
+public:
+  /**
+   * Construct auto costing for shorter (not absolute shortest) path.
+   * Pass in costing_options with protocol buffer(pbf).
+   * @param  costing_options  pbf with costing_options.
+   */
+  AutoCo2Cost(const CostingOptions& costing_options) : AutoCost(costing_options) {
+    // keep everything the same
+  }
+
+
+  // virtual destructor
+  virtual ~AutoCo2Cost() {
+  }
+
+  // Get the cost to traverse the edge in seconds using the Co2 highway factor
+  virtual Cost EdgeCost(const baldr::DirectedEdge* edge,
+                        const baldr::GraphTile* tile,
+                        const uint32_t seconds) const {
+
+    auto speed = tile->GetSpeed(edge, flow_mask_, seconds);
+
+    float factor =
+        (edge->use() == Use::kFerry)
+            ? ferry_factor_
+            : (edge->use() == Use::kRailFerry) ? rail_ferry_factor_ : density_factor_[edge->density()];
+
+    factor += highway_factor_ * kHighwayFactorCo2[static_cast<uint32_t>(edge->classification())] +
+              surface_factor_ * kSurfaceFactor[static_cast<uint32_t>(edge->surface())];
+    if (edge->toll()) {
+      factor += toll_factor_;
+    }
+
+    if (edge->use() == Use::kAlley) {
+      factor *= alley_factor_;
+    }
+
+    assert(speed < speedfactor_.size());
+    float sec = (edge->length() * speedfactor_[speed]);
+    return Cost(sec * factor, sec);
+  }
+
+};
+
+void ParseAutoCo2CostOptions(const rapidjson::Document& doc,
+                                 const std::string& costing_options_key,
+                                 CostingOptions* pbf_costing_options) {
+  ParseAutoCostOptions(doc, costing_options_key, pbf_costing_options);
+  pbf_costing_options->set_costing(Costing::auto_co2);
+  pbf_costing_options->set_name(Costing_Enum_Name(pbf_costing_options->costing()));
+}
+
+cost_ptr_t CreateAutoCo2Cost(const CostingOptions& costing_options) {
+  return std::make_shared<AutoCo2Cost>(costing_options);
+}
+
+/* ------------------------------------------------------------------------------------------------------------- */
+
 
 /**
  * Derived class providing bus costing for driving.

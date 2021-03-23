@@ -278,6 +278,10 @@ void ParseCostingOptions(const rapidjson::Document& doc,
       sif::ParseAutoCostOptions(doc, key, costing_options);
       break;
     }
+    case auto_co2: {
+      sif::ParseAutoCo2CostOptions(doc, key, costing_options);
+      break;
+    }
     case bicycle: {
       sif::ParseBicycleCostOptions(doc, key, costing_options);
       break;

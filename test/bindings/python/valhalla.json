@@ -128,6 +128,12 @@
       "max_matrix_distance": 400000.0,
       "max_matrix_locations": 50
     },
+    "auto_co2": {
+      "max_distance": 5000000.0,
+      "max_locations": 20,
+      "max_matrix_distance": 400000.0,
+      "max_matrix_locations": 50
+    },
     "auto_shorter": {
       "max_distance": 5000000.0,
       "max_locations": 20,

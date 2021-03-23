@@ -1589,7 +1589,7 @@ TEST(ParseRequest, test_filter_attributes) {
 }
 
 std::vector<Costing> get_base_auto_costing_list() {
-  return {Costing::auto_, Costing::bus, Costing::hov, Costing::taxi};
+  return {Costing::auto_, Costing::bus, Costing::hov, Costing::taxi, Costing::auto_co2};
 }
 TEST(ParseRequest, test_default_base_auto_cost_options) {
   for (auto costing : get_base_auto_costing_list()) {

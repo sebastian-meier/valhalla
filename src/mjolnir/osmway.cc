@@ -10,7 +10,7 @@ namespace {
 
 constexpr uint32_t kMaxNodesPerWay = 65535;
 constexpr uint8_t kUnlimitedOSMSpeed = std::numeric_limits<uint8_t>::max();
-constexpr float kMaxOSMSpeed = 140.0f;
+constexpr float kMaxOSMSpeed = 140.0f; // TODO: MaxSpeed
 
 } // namespace
 
